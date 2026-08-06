@@ -25,7 +25,6 @@ function FamilyPage() {
   const { displayName } = useAuthUser();
   const { data: profiles } = useRows("profiles", { order: "name" });
   const { data: tasks } = useRows("tasks");
-  const { data: shopping } = useRows("shopping_items");
   const saveProfile = useSaveRow("profiles", "Family");
 
   function invite(p: any) {
@@ -39,8 +38,9 @@ function FamilyPage() {
       <PageHeader title="Family" subtitle={`Signed in as ${displayName}`} />
       <div className="grid gap-3 sm:grid-cols-2">
         {(profiles ?? []).map((p: any) => {
-          const myTasks = (tasks ?? []).filter((x: any) => x.assigned_to === p.name);
-          const myShopping = (shopping ?? []).filter((s: any) => s.assigned_to === p.name);
+          const allMine = (tasks ?? []).filter((x: any) => x.assigned_to === p.name);
+          const myTasks = allMine.filter((x: any) => x.category !== "Shopping");
+          const myShopping = allMine.filter((x: any) => x.category === "Shopping");
           const spend = myShopping.reduce((s: number, x: any) => s + Number(x.price ?? 0), 0);
           return (
             <section key={p.id} className="card-warm p-5">
@@ -55,7 +55,7 @@ function FamilyPage() {
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Badge variant="secondary">{myTasks.filter((x: any) => x.status !== "Completed").length} {t("tasks left")}</Badge>
-                <Badge variant="secondary">{myShopping.filter((s: any) => !s.bought).length} {t("items to buy")}</Badge>
+                <Badge variant="secondary">{myShopping.filter((s: any) => s.status !== "Completed").length} {t("items to buy")}</Badge>
                 <Badge variant="secondary">{inr(spend)}</Badge>
               </div>
               <ul className="mt-3 space-y-1 text-sm text-muted-foreground">

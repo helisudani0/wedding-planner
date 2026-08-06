@@ -25,7 +25,6 @@ export function CalendarPage() {
   const [cursor, setCursor] = useState(() => new Date());
   const { data: events } = useRows("events", { order: "sort_order" });
   const { data: tasks } = useRows("tasks");
-  const { data: shopping } = useRows("shopping_items");
   const { data: expenses } = useRows("expenses");
 
   const year = cursor.getFullYear();
@@ -40,8 +39,11 @@ export function CalendarPage() {
     byDay.set(date, [...(byDay.get(date) ?? []), dot]);
   };
   (events ?? []).forEach((e: any) => push(e.event_date, { label: e.name, tone: "bg-gold" }));
-  (tasks ?? []).forEach((x: any) => x.status !== "Completed" && push(x.due_date, { label: x.title, tone: "bg-primary" }));
-  (shopping ?? []).forEach((s: any) => !s.bought && push(s.due_date, { label: s.item_name, tone: "bg-emerald-500" }));
+  (tasks ?? []).forEach((x: any) => {
+    if (x.status === "Completed") return;
+    const tone = x.category === "Shopping" ? "bg-emerald-500" : "bg-primary";
+    push(x.due_date, { label: x.title, tone });
+  });
   (expenses ?? []).forEach((e: any) => !e.paid && push(e.due_date, { label: e.title, tone: "bg-destructive" }));
 
   const cells = [

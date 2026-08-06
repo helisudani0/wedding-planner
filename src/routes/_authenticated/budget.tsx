@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useRows, useSaveRow, useDeleteRow, type Row } from "@/lib/db";
@@ -38,7 +38,8 @@ export const Route = createFileRoute("/_authenticated/budget")({
 function BudgetPage() {
   const { t } = useI18n();
   const { data } = useRows("expenses", { order: "due_date" });
-  const { data: settings } = useRows("budget_settings");
+  // Most-recently-updated settings row wins, so a stray duplicate row never masks a real save.
+  const { data: settings } = useRows("budget_settings", { order: "updated_at", asc: false });
   const save = useSaveRow("expenses", "Budget");
   const saveBudget = useSaveRow("budget_settings", "Total Budget");
   const remove = useDeleteRow("expenses");
@@ -46,6 +47,23 @@ function BudgetPage() {
 
   const setting = (settings ?? [])[0];
   const total = Number(setting?.total_budget ?? 0);
+  const [budgetInput, setBudgetInput] = useState(total ? String(total) : "");
+  useEffect(() => {
+    // Sync the field with the saved value once it loads, but don't fight the
+    // user while they're actively typing (input isn't focused).
+    if (document.activeElement?.id !== "total-budget-input") {
+      setBudgetInput(total ? String(total) : "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [total]);
+
+  function commitBudget() {
+    const parsed = Number(budgetInput.replace(/[^0-9.-]/g, ""));
+    const value = Number.isFinite(parsed) ? parsed : 0;
+    saveBudget.mutate({ ...(setting ?? {}), total_budget: value });
+    setBudgetInput(value ? String(value) : "");
+  }
+
   const rows = (data ?? []) as Row[];
   // Fully paid items count their full amount; unpaid items count whatever advance/partial has gone out so far.
   const spent = rows.reduce(
@@ -80,12 +98,17 @@ function BudgetPage() {
         <div className="card-warm p-4">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">{t("Total Budget")}</p>
           <Input
+            id="total-budget-input"
             className="mt-1 h-12 border-0 bg-transparent px-0 font-display text-2xl shadow-none focus-visible:ring-0"
-            type="number"
-            defaultValue={total}
-            onBlur={(e) =>
-              saveBudget.mutate({ ...(setting ?? {}), total_budget: Number(e.target.value) })
-            }
+            type="text"
+            inputMode="numeric"
+            placeholder="0"
+            value={budgetInput}
+            onChange={(e) => setBudgetInput(e.target.value)}
+            onBlur={commitBudget}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+            }}
           />
         </div>
         <Card label="Money Spent" value={inr(spent)} />

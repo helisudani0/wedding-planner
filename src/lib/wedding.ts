@@ -3,7 +3,6 @@ import {
   CalendarDays,
   Users,
   Wallet,
-  ShoppingBag,
   ListChecks,
   Store,
   UtensilsCrossed,
@@ -28,7 +27,6 @@ import {
   BedDouble,
   Car,
   Armchair,
-  Soup,
   Radio,
   History,
   type LucideIcon,
@@ -46,11 +44,9 @@ export const NAV: NavItem[] = [
 
   { to: "/guests", label: "Guest List", icon: Users, group: "Planning" },
   { to: "/tasks", label: "Tasks", icon: ListChecks, group: "Planning" },
-  { to: "/shopping", label: "Shopping", icon: ShoppingBag, group: "Planning" },
   { to: "/budget", label: "Budget", icon: Wallet, group: "Planning" },
   { to: "/providers", label: "Service Providers", icon: Store, group: "Planning" },
   { to: "/catering", label: "Catering", icon: UtensilsCrossed, group: "Planning" },
-  { to: "/food", label: "Food Planner", icon: Soup, group: "Planning" },
   { to: "/reminders", label: "Reminders", icon: BellRing, group: "Planning" },
 
   { to: "/checklist", label: "Master Checklist", icon: CheckSquare, group: "Checklists" },
@@ -97,6 +93,8 @@ export const EXPENSE_CATEGORIES = [
   "Gifts",
   "Miscellaneous",
 ];
+
+export const TASK_CATEGORIES = ["General", "Shopping", "Vendor Booking", "Documentation", "Other"];
 
 export const SHOPPING_LISTS = [
   "Bride",

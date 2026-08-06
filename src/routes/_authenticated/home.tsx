@@ -3,7 +3,6 @@ import {
   CalendarDays,
   Users,
   Wallet,
-  ShoppingBag,
   ListChecks,
   Plus,
   Bell,
@@ -57,20 +56,28 @@ function HomePage() {
   const { data: tasks } = useRows("tasks");
   const { data: guests } = useRows("guests");
   const { data: expenses } = useRows("expenses");
-  const { data: shopping } = useRows("shopping_items");
-  const { data: budget } = useRows("budget_settings");
+  const { data: budget } = useRows("budget_settings", { order: "updated_at", asc: false });
   const { data: notes } = useRows("notes");
   const { data: activity } = useRows("activity_log", { order: "created_at", asc: false });
 
   const today = new Date().toISOString().slice(0, 10);
   const openTasks = (tasks ?? []).filter((x: any) => x.status !== "Completed");
   const todayTasks = openTasks.filter((x: any) => x.due_date && x.due_date <= today);
-  const spent = (expenses ?? []).filter((e: any) => e.paid).reduce((s: number, e: any) => s + Number(e.amount ?? 0), 0);
+  // Same formulas as the Budget page, so the dashboard numbers always match it:
+  // fully paid items count their full amount, unpaid items count only the advance paid so far.
+  const spent = (expenses ?? []).reduce(
+    (s: number, e: any) => s + (e.paid ? Number(e.amount ?? 0) : Number(e.amount_paid ?? 0)),
+    0,
+  );
   const upcomingPayments = (expenses ?? []).filter((e: any) => !e.paid);
-  const upcomingTotal = upcomingPayments.reduce((s: number, e: any) => s + Number(e.amount ?? 0), 0);
+  const upcomingTotal = upcomingPayments.reduce(
+    (s: number, e: any) => s + Math.max(0, Number(e.amount ?? 0) - Number(e.amount_paid ?? 0)),
+    0,
+  );
   const total = Number((budget ?? [])[0]?.total_budget ?? 0);
   const guestHeads = (guests ?? []).reduce((s: number, g: any) => s + Number(g.guest_count ?? 1), 0);
-  const bought = (shopping ?? []).filter((s: any) => s.bought).length;
+  const shoppingTasks = (tasks ?? []).filter((x: any) => x.category === "Shopping");
+  const bought = shoppingTasks.filter((x: any) => x.status === "Completed").length;
   const upcoming = (events ?? [])
     .filter((e: any) => e.event_date && e.event_date >= today)
     .slice(0, 4);
@@ -96,7 +103,6 @@ function HomePage() {
         <div className="flex flex-wrap justify-center gap-2">
           <Button asChild size="lg"><Link to="/today"><Plus className="mr-2 h-4 w-4" />{t("Today's Plan")}</Link></Button>
           <Button asChild size="lg" variant="outline"><Link to="/tasks"><ListChecks className="mr-2 h-4 w-4" />{t("Tasks")}</Link></Button>
-          <Button asChild size="lg" variant="outline"><Link to="/shopping"><ShoppingBag className="mr-2 h-4 w-4" />{t("Shopping")}</Link></Button>
           <Button asChild size="lg" variant="outline"><Link to="/guests"><Users className="mr-2 h-4 w-4" />{t("Guest List")}</Link></Button>
           <Button asChild size="lg" variant="outline"><Link to="/gallery"><Camera className="mr-2 h-4 w-4" />{t("Photo Gallery")}</Link></Button>
         </div>
@@ -147,7 +153,7 @@ function HomePage() {
             <Wallet className="h-5 w-5 text-gold" /> {t("Progress")}
           </h2>
           <div className="space-y-3">
-            <Bar label="Shopping done" value={pct(bought, (shopping ?? []).length)} />
+            <Bar label="Shopping done" value={pct(bought, shoppingTasks.length)} />
             <Bar label="Tasks done" value={pct((tasks ?? []).length - openTasks.length, (tasks ?? []).length)} />
             <Bar label="Budget used" value={total ? Math.min(100, Math.round((spent / total) * 100)) : 0} />
             <Bar

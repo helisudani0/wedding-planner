@@ -37,14 +37,19 @@ function Line({ label, done, total, tone }: { label: string; done: number; total
 function ProgressPage() {
   const { t } = useI18n();
   const { data: tasks } = useRows("tasks");
-  const { data: shopping } = useRows("shopping_items");
   const { data: guests } = useRows("guests");
   const { data: expenses } = useRows("expenses");
   const { data: checklists } = useRows("checklists");
-  const { data: settings } = useRows("budget_settings");
+  const { data: settings } = useRows("budget_settings", { order: "updated_at", asc: false });
+  const shopping = (tasks ?? []).filter((x: any) => x.category === "Shopping");
+  const nonShoppingTasks = (tasks ?? []).filter((x: any) => x.category !== "Shopping");
 
   const total = Number((settings ?? [])[0]?.total_budget ?? 0);
-  const spent = (expenses ?? []).filter((e: any) => e.paid).reduce((s: number, e: any) => s + Number(e.amount ?? 0), 0);
+  // Same formula as the Budget page: fully paid items count in full, unpaid items count their advance.
+  const spent = (expenses ?? []).reduce(
+    (s: number, e: any) => s + (e.paid ? Number(e.amount ?? 0) : Number(e.amount_paid ?? 0)),
+    0,
+  );
   const byCat = EXPENSE_CATEGORIES.map((c) => ({
     c,
     v: (expenses ?? []).filter((e: any) => e.category === c).reduce((s: number, e: any) => s + Number(e.amount ?? 0), 0),
@@ -55,8 +60,8 @@ function ProgressPage() {
     <div className="rise-in">
       <PageHeader title="Progress" subtitle="How far along we are" />
       <div className="grid gap-3 sm:grid-cols-2">
-        <Line label="Shopping Completed" done={(shopping ?? []).filter((s: any) => s.bought).length} total={(shopping ?? []).length} tone="[&>div]:bg-emerald-500" />
-        <Line label="Tasks Completed" done={(tasks ?? []).filter((x: any) => x.status === "Completed").length} total={(tasks ?? []).length} tone="[&>div]:bg-primary" />
+        <Line label="Shopping Completed" done={shopping.filter((s: any) => s.status === "Completed").length} total={shopping.length} tone="[&>div]:bg-emerald-500" />
+        <Line label="Tasks Completed" done={nonShoppingTasks.filter((x: any) => x.status === "Completed").length} total={nonShoppingTasks.length} tone="[&>div]:bg-primary" />
         <Line label="Budget Used" done={spent} total={total || 1} tone="[&>div]:bg-gold" />
         <Line label="Guests Confirmed" done={(guests ?? []).filter((g: any) => g.coming === "Yes").length} total={(guests ?? []).length} tone="[&>div]:bg-sky-500" />
         <Line label="Invitations Given" done={(guests ?? []).filter((g: any) => g.invitation_given).length} total={(guests ?? []).length} tone="[&>div]:bg-amber-500" />

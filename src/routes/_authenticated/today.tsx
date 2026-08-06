@@ -24,14 +24,16 @@ function TodayPage() {
   const today = new Date().toISOString().slice(0, 10);
   const { data: events } = useRows("events", { order: "sort_order" });
   const { data: tasks } = useRows("tasks");
-  const { data: shopping } = useRows("shopping_items");
   const { data: expenses } = useRows("expenses");
   const saveTask = useSaveRow("tasks", "Tasks");
-  const saveShop = useSaveRow("shopping_items", "Shopping");
 
   const todayEvents = (events ?? []).filter((e: any) => e.event_date === today);
-  const dueTasks = (tasks ?? []).filter((x: any) => x.status !== "Completed" && x.due_date && x.due_date <= today);
-  const dueShopping = (shopping ?? []).filter((s: any) => !s.bought && s.due_date && s.due_date <= today);
+  const dueTasks = (tasks ?? []).filter(
+    (x: any) => x.category !== "Shopping" && x.status !== "Completed" && x.due_date && x.due_date <= today,
+  );
+  const dueShopping = (tasks ?? []).filter(
+    (x: any) => x.category === "Shopping" && x.status !== "Completed" && x.due_date && x.due_date <= today,
+  );
   const duePayments = (expenses ?? []).filter((e: any) => !e.paid && e.due_date && e.due_date <= today);
 
   return (
@@ -84,9 +86,9 @@ function TodayPage() {
               <Checkbox
                 className="h-6 w-6"
                 checked={false}
-                onCheckedChange={() => saveShop.mutate({ id: s.id, bought: true })}
+                onCheckedChange={() => saveTask.mutate({ id: s.id, status: "Completed" })}
               />
-              <span className="flex-1">{s.item_name}</span>
+              <span className="flex-1">{s.title}</span>
               <span className="text-sm text-muted-foreground">{s.list_name}</span>
             </li>
           ))}

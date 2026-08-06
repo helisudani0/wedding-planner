@@ -21,7 +21,6 @@ export const Route = createFileRoute("/_authenticated/search")({
 const SOURCES = [
   { table: "guests", label: "Guest List", to: "/guests", field: "name" },
   { table: "tasks", label: "Tasks", to: "/tasks", field: "title" },
-  { table: "shopping_items", label: "Shopping", to: "/shopping", field: "item_name" },
   { table: "expenses", label: "Budget", to: "/budget", field: "title" },
   { table: "vendors", label: "Service Providers", to: "/providers", field: "name" },
   { table: "documents", label: "Documents", to: "/documents", field: "title" },

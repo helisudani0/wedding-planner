@@ -22,7 +22,6 @@ import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDanceRouteImport } from './routes/_authenticated/dance'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedFamilyRouteImport } from './routes/_authenticated/family'
-import { Route as AuthenticatedFoodRouteImport } from './routes/_authenticated/food'
 import { Route as AuthenticatedGalleryRouteImport } from './routes/_authenticated/gallery'
 import { Route as AuthenticatedGuestsRouteImport } from './routes/_authenticated/guests'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
@@ -42,7 +41,6 @@ import { Route as AuthenticatedReturnGiftsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedSeatingRouteImport } from './routes/_authenticated/seating'
-import { Route as AuthenticatedShoppingRouteImport } from './routes/_authenticated/shopping'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
 import { Route as AuthenticatedTodayRouteImport } from './routes/_authenticated/today'
 import { Route as AuthenticatedTravelRouteImport } from './routes/_authenticated/travel'
@@ -109,11 +107,6 @@ const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
 const AuthenticatedFamilyRoute = AuthenticatedFamilyRouteImport.update({
   id: '/family',
   path: '/family',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedFoodRoute = AuthenticatedFoodRouteImport.update({
-  id: '/food',
-  path: '/food',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedGalleryRoute = AuthenticatedGalleryRouteImport.update({
@@ -213,11 +206,6 @@ const AuthenticatedSeatingRoute = AuthenticatedSeatingRouteImport.update({
   path: '/seating',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedShoppingRoute = AuthenticatedShoppingRouteImport.update({
-  id: '/shopping',
-  path: '/shopping',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
@@ -247,7 +235,6 @@ export interface FileRoutesByFullPath {
   '/dance': typeof AuthenticatedDanceRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/family': typeof AuthenticatedFamilyRoute
-  '/food': typeof AuthenticatedFoodRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/guests': typeof AuthenticatedGuestsRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -267,7 +254,6 @@ export interface FileRoutesByFullPath {
   '/schedule': typeof AuthenticatedScheduleRoute
   '/search': typeof AuthenticatedSearchRoute
   '/seating': typeof AuthenticatedSeatingRoute
-  '/shopping': typeof AuthenticatedShoppingRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/today': typeof AuthenticatedTodayRoute
   '/travel': typeof AuthenticatedTravelRoute
@@ -285,7 +271,6 @@ export interface FileRoutesByTo {
   '/dance': typeof AuthenticatedDanceRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/family': typeof AuthenticatedFamilyRoute
-  '/food': typeof AuthenticatedFoodRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/guests': typeof AuthenticatedGuestsRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -305,7 +290,6 @@ export interface FileRoutesByTo {
   '/schedule': typeof AuthenticatedScheduleRoute
   '/search': typeof AuthenticatedSearchRoute
   '/seating': typeof AuthenticatedSeatingRoute
-  '/shopping': typeof AuthenticatedShoppingRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/today': typeof AuthenticatedTodayRoute
   '/travel': typeof AuthenticatedTravelRoute
@@ -325,7 +309,6 @@ export interface FileRoutesById {
   '/_authenticated/dance': typeof AuthenticatedDanceRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/family': typeof AuthenticatedFamilyRoute
-  '/_authenticated/food': typeof AuthenticatedFoodRoute
   '/_authenticated/gallery': typeof AuthenticatedGalleryRoute
   '/_authenticated/guests': typeof AuthenticatedGuestsRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
@@ -345,7 +328,6 @@ export interface FileRoutesById {
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/seating': typeof AuthenticatedSeatingRoute
-  '/_authenticated/shopping': typeof AuthenticatedShoppingRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/today': typeof AuthenticatedTodayRoute
   '/_authenticated/travel': typeof AuthenticatedTravelRoute
@@ -365,7 +347,6 @@ export interface FileRouteTypes {
     | '/dance'
     | '/documents'
     | '/family'
-    | '/food'
     | '/gallery'
     | '/guests'
     | '/home'
@@ -385,7 +366,6 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/search'
     | '/seating'
-    | '/shopping'
     | '/tasks'
     | '/today'
     | '/travel'
@@ -403,7 +383,6 @@ export interface FileRouteTypes {
     | '/dance'
     | '/documents'
     | '/family'
-    | '/food'
     | '/gallery'
     | '/guests'
     | '/home'
@@ -423,7 +402,6 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/search'
     | '/seating'
-    | '/shopping'
     | '/tasks'
     | '/today'
     | '/travel'
@@ -442,7 +420,6 @@ export interface FileRouteTypes {
     | '/_authenticated/dance'
     | '/_authenticated/documents'
     | '/_authenticated/family'
-    | '/_authenticated/food'
     | '/_authenticated/gallery'
     | '/_authenticated/guests'
     | '/_authenticated/home'
@@ -462,7 +439,6 @@ export interface FileRouteTypes {
     | '/_authenticated/schedule'
     | '/_authenticated/search'
     | '/_authenticated/seating'
-    | '/_authenticated/shopping'
     | '/_authenticated/tasks'
     | '/_authenticated/today'
     | '/_authenticated/travel'
@@ -565,13 +541,6 @@ declare module '@tanstack/react-router' {
       path: '/family'
       fullPath: '/family'
       preLoaderRoute: typeof AuthenticatedFamilyRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/food': {
-      id: '/_authenticated/food'
-      path: '/food'
-      fullPath: '/food'
-      preLoaderRoute: typeof AuthenticatedFoodRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/gallery': {
@@ -707,13 +676,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSeatingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/shopping': {
-      id: '/_authenticated/shopping'
-      path: '/shopping'
-      fullPath: '/shopping'
-      preLoaderRoute: typeof AuthenticatedShoppingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/tasks': {
       id: '/_authenticated/tasks'
       path: '/tasks'
@@ -749,7 +711,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDanceRoute: typeof AuthenticatedDanceRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedFamilyRoute: typeof AuthenticatedFamilyRoute
-  AuthenticatedFoodRoute: typeof AuthenticatedFoodRoute
   AuthenticatedGalleryRoute: typeof AuthenticatedGalleryRoute
   AuthenticatedGuestsRoute: typeof AuthenticatedGuestsRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
@@ -769,7 +730,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSeatingRoute: typeof AuthenticatedSeatingRoute
-  AuthenticatedShoppingRoute: typeof AuthenticatedShoppingRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedTodayRoute: typeof AuthenticatedTodayRoute
   AuthenticatedTravelRoute: typeof AuthenticatedTravelRoute
@@ -786,7 +746,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDanceRoute: AuthenticatedDanceRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedFamilyRoute: AuthenticatedFamilyRoute,
-  AuthenticatedFoodRoute: AuthenticatedFoodRoute,
   AuthenticatedGalleryRoute: AuthenticatedGalleryRoute,
   AuthenticatedGuestsRoute: AuthenticatedGuestsRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
@@ -806,7 +765,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSeatingRoute: AuthenticatedSeatingRoute,
-  AuthenticatedShoppingRoute: AuthenticatedShoppingRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedTodayRoute: AuthenticatedTodayRoute,
   AuthenticatedTravelRoute: AuthenticatedTravelRoute,
@@ -823,3 +781,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
