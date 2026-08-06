@@ -15,6 +15,7 @@ const FIELDS: Field[] = [
   { name: "title", label: "What for" },
   { name: "category", label: "Category", type: "select", options: EXPENSE_CATEGORIES },
   { name: "amount", label: "Amount", type: "number" },
+  { name: "amount_paid", label: "Amount Paid (advance / partial)", type: "number" },
   { name: "due_date", label: "Due Date", type: "date" },
   { name: "paid", label: "Paid", type: "bool" },
   { name: "paid_on", label: "Paid On", type: "date" },
@@ -46,9 +47,16 @@ function BudgetPage() {
   const setting = (settings ?? [])[0];
   const total = Number(setting?.total_budget ?? 0);
   const rows = (data ?? []) as Row[];
-  const spent = rows.filter((r) => r.paid).reduce((s, r) => s + Number(r.amount ?? 0), 0);
+  // Fully paid items count their full amount; unpaid items count whatever advance/partial has gone out so far.
+  const spent = rows.reduce(
+    (s, r) => s + (r.paid ? Number(r.amount ?? 0) : Number(r.amount_paid ?? 0)),
+    0,
+  );
   const pending = rows.filter((r) => !r.paid);
-  const pendingTotal = pending.reduce((s, r) => s + Number(r.amount ?? 0), 0);
+  const pendingTotal = pending.reduce(
+    (s, r) => s + Math.max(0, Number(r.amount ?? 0) - Number(r.amount_paid ?? 0)),
+    0,
+  );
 
   const byCategory = useMemo(() => {
     const map = new Map<string, number>();
@@ -111,6 +119,9 @@ function BudgetPage() {
                 <p className="font-display text-xl">{r.title}</p>
                 <p className="text-sm text-muted-foreground">
                   {t(r.category)} • {r.paid ? t("Paid") : `${t("Due")} ${r.due_date ?? "—"}`}
+                  {!r.paid && Number(r.amount_paid ?? 0) > 0
+                    ? ` • ${inr(Number(r.amount_paid))} ${t("advance paid")}`
+                    : ""}
                 </p>
               </div>
               <div className="flex items-center gap-1">

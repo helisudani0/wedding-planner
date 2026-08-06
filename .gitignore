@@ -35,4 +35,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-supabase/.temp/
+supabase/.temp
