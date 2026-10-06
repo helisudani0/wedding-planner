@@ -118,7 +118,7 @@ function BudgetPage() {
           <p className="text-xs uppercase tracking-widest text-muted-foreground">{t("Total Budget")}</p>
           <Input
             id="total-budget-input"
-            className="mt-1 h-12 border-0 bg-transparent px-0 font-display text-2xl shadow-none focus-visible:ring-0"
+            className="mt-1 h-12 border-0 bg-transparent px-0 font-display text-2xl md:text-2xl shadow-none focus-visible:ring-0"
             type="text"
             inputMode="numeric"
             placeholder="0"
@@ -138,7 +138,7 @@ function BudgetPage() {
           <p className="text-xs uppercase tracking-widest text-muted-foreground">{t("Money Sent by Megha")}</p>
           <Input
             id="megha-sent-input"
-            className="mt-1 h-12 border-0 bg-transparent px-0 font-display text-2xl shadow-none focus-visible:ring-0"
+            className="mt-1 h-12 border-0 bg-transparent px-0 font-display text-2xl md:text-2xl shadow-none focus-visible:ring-0"
             type="text"
             inputMode="numeric"
             placeholder="0"
