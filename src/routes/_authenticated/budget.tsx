@@ -48,19 +48,19 @@ function BudgetPage() {
   const setting = (settings ?? [])[0];
   const total = Number(setting?.total_budget ?? 0);
   const meghaSent = Number(setting?.megha_sent ?? 0);
-  const [budgetInput, setBudgetInput] = useState(total ? String(total) : "");
-  const [meghaInput, setMeghaInput] = useState(meghaSent ? String(meghaSent) : "");
+  const [budgetInput, setBudgetInput] = useState(total ? inr(total) : "");
+  const [meghaInput, setMeghaInput] = useState(meghaSent ? inr(meghaSent) : "");
   useEffect(() => {
     // Sync the field with the saved value once it loads, but don't fight the
     // user while they're actively typing (input isn't focused).
     if (document.activeElement?.id !== "total-budget-input") {
-      setBudgetInput(total ? String(total) : "");
+      setBudgetInput(total ? inr(total) : "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
   useEffect(() => {
     if (document.activeElement?.id !== "megha-sent-input") {
-      setMeghaInput(meghaSent ? String(meghaSent) : "");
+      setMeghaInput(meghaSent ? inr(meghaSent) : "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meghaSent]);
@@ -69,14 +69,14 @@ function BudgetPage() {
     const parsed = Number(budgetInput.replace(/[^0-9.-]/g, ""));
     const value = Number.isFinite(parsed) ? parsed : 0;
     saveBudget.mutate({ ...(setting ?? {}), total_budget: value });
-    setBudgetInput(value ? String(value) : "");
+    setBudgetInput(value ? inr(value) : "");
   }
 
   function commitMeghaSent() {
     const parsed = Number(meghaInput.replace(/[^0-9.-]/g, ""));
     const value = Number.isFinite(parsed) ? parsed : 0;
     saveBudget.mutate({ ...(setting ?? {}), megha_sent: value });
-    setMeghaInput(value ? String(value) : "");
+    setMeghaInput(value ? inr(value) : "");
   }
 
   const rows = (data ?? []) as Row[];
@@ -124,6 +124,7 @@ function BudgetPage() {
             placeholder="0"
             value={budgetInput}
             onChange={(e) => setBudgetInput(e.target.value)}
+            onFocus={() => setBudgetInput(total ? String(total) : "")}
             onBlur={commitBudget}
             onKeyDown={(e) => {
               if (e.key === "Enter") (e.target as HTMLInputElement).blur();
@@ -143,6 +144,7 @@ function BudgetPage() {
             placeholder="0"
             value={meghaInput}
             onChange={(e) => setMeghaInput(e.target.value)}
+            onFocus={() => setMeghaInput(meghaSent ? String(meghaSent) : "")}
             onBlur={commitMeghaSent}
             onKeyDown={(e) => {
               if (e.key === "Enter") (e.target as HTMLInputElement).blur();
