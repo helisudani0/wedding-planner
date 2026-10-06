@@ -47,7 +47,9 @@ function BudgetPage() {
 
   const setting = (settings ?? [])[0];
   const total = Number(setting?.total_budget ?? 0);
+  const meghaSent = Number(setting?.megha_sent ?? 0);
   const [budgetInput, setBudgetInput] = useState(total ? String(total) : "");
+  const [meghaInput, setMeghaInput] = useState(meghaSent ? String(meghaSent) : "");
   useEffect(() => {
     // Sync the field with the saved value once it loads, but don't fight the
     // user while they're actively typing (input isn't focused).
@@ -56,12 +58,25 @@ function BudgetPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
+  useEffect(() => {
+    if (document.activeElement?.id !== "megha-sent-input") {
+      setMeghaInput(meghaSent ? String(meghaSent) : "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meghaSent]);
 
   function commitBudget() {
     const parsed = Number(budgetInput.replace(/[^0-9.-]/g, ""));
     const value = Number.isFinite(parsed) ? parsed : 0;
     saveBudget.mutate({ ...(setting ?? {}), total_budget: value });
     setBudgetInput(value ? String(value) : "");
+  }
+
+  function commitMeghaSent() {
+    const parsed = Number(meghaInput.replace(/[^0-9.-]/g, ""));
+    const value = Number.isFinite(parsed) ? parsed : 0;
+    saveBudget.mutate({ ...(setting ?? {}), megha_sent: value });
+    setMeghaInput(value ? String(value) : "");
   }
 
   const rows = (data ?? []) as Row[];
@@ -75,6 +90,10 @@ function BudgetPage() {
     (s, r) => s + Math.max(0, Number(r.amount ?? 0) - Number(r.amount_paid ?? 0)),
     0,
   );
+  // Megha's contribution: what's left of what she sent, and how much more she
+  // needs to send to cover the upcoming payments.
+  const meghaRemaining = meghaSent - spent;
+  const meghaToSend = Math.max(0, pendingTotal - meghaRemaining);
 
   const byCategory = useMemo(() => {
     const map = new Map<string, number>();
@@ -94,7 +113,7 @@ function BudgetPage() {
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card-warm p-4">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">{t("Total Budget")}</p>
           <Input
@@ -114,6 +133,24 @@ function BudgetPage() {
         <Card label="Money Spent" value={inr(spent)} />
         <Card label="Money Left" value={inr(Math.max(0, total - spent))} />
         <Card label="Upcoming Payments" value={inr(pendingTotal)} />
+        <div className="card-warm p-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">{t("Money Sent by Megha")}</p>
+          <Input
+            id="megha-sent-input"
+            className="mt-1 h-12 border-0 bg-transparent px-0 font-display text-2xl shadow-none focus-visible:ring-0"
+            type="text"
+            inputMode="numeric"
+            placeholder="0"
+            value={meghaInput}
+            onChange={(e) => setMeghaInput(e.target.value)}
+            onBlur={commitMeghaSent}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+            }}
+          />
+        </div>
+        <Card label="Remaining from Megha" value={inr(meghaRemaining)} />
+        <Card label="Megha Still Needs to Send" value={inr(meghaToSend)} />
       </div>
 
       <div className="card-warm mt-4 p-5">
