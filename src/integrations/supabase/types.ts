@@ -48,16 +48,19 @@ export type Database = {
         Row: {
           id: string
           total_budget: number
+          megha_sent: number
           updated_at: string
         }
         Insert: {
           id?: string
           total_budget?: number
+          megha_sent?: number
           updated_at?: string
         }
         Update: {
           id?: string
           total_budget?: number
+          megha_sent?: number
           updated_at?: string
         }
         Relationships: []
